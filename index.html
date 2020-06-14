@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fetch API Sandbox</title>
+    <!-- CSS only -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="display-4 mt-4 mb-4">Fetch API Playground</h1>
+      <div class="d-flex">
+        <button class="btn btn-primary mr-4" id="getText">Get Text</button>
+        <button class="btn btn-success mr-4" id="getHero">Get JSON</button>
+        <button class="btn btn-info mr-4" id="getPosts">Get API Data</button>
+      </div>
+
+      <hr />
+      <form id="addPost">
+        <div class="form-group">
+          <input
+            class="form-control"
+            type="text"
+            id="title"
+            placeholder="Title"
+          />
+        </div>
+        <div class="form-group">
+          <textarea
+            class="form-control"
+            type="text"
+            id="body"
+            placeholder="Body"
+          ></textarea>
+        </div>
+
+        <input class="btn btn-dark" type="submit" value="Submit" />
+      </form>
+
+      <div id="output" class="mt-4 display-5"></div>
+    </div>
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+      integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.getElementById("getText").addEventListener("click", function () {
+        let url = "SandboxFiles/sample.txt";
+        fetch(url)
+          .then((res) => res.text()) // return res.text() as data
+          .then((data) => {
+            document.getElementById("output").innerHTML = data;
+          })
+          .catch((err) => consolo.log(err));
+      });
+
+      document.getElementById("getHero").addEventListener("click", function () {
+        let url = "SandboxFiles/hero.json";
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            let heroMembers = data.members;
+            let output = "<h2>Hero Members:</h2>";
+            heroMembers.forEach(function (hero) {
+              output += `
+                        <ul class="list-group mb-3">
+                        <li class="list-group-item" >Name: ${hero.name}</li>
+                        <li class="list-group-item" >Age: ${hero.age}</li>
+                        <li class="list-group-item" >Secret Identity: ${hero.secretIdentity}</li>
+                        <li class="list-group-item">Power: ${hero.powers}</li></ul>
+                        `;
+            });
+            document.getElementById("output").innerHTML = output;
+          })
+          .catch((err) => consolo.log(err));
+      });
+
+      document
+        .getElementById("getPosts")
+        .addEventListener("click", function () {
+          let url = "https://jsonplaceholder.typicode.com/posts";
+          fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+              let output = "<h2>POSTS</h2>";
+              data.forEach(function (user) {
+                output += `
+                        <div class="card card-body mb-3">
+                            <h3>${user.title}
+                            </h3>
+                            <p>${user.body}
+                            </p>
+                        </div>
+                        `;
+              });
+              document.getElementById("output").innerHTML = output;
+            })
+            .catch((err) => consolo.log(err));
+        });
+
+      document
+        .getElementById("addPost")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          let title = document.getElementById("title").value;
+          let body = document.getElementById("body").value;
+          let url = "https://jsonplaceholder.typicode.com/posts";
+
+          fetch(url, {
+            method: "POST",
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: title, body: body }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              let output = "<h2>POSTS</h2>";
+              output += `<h3>${data.title}</h3><p>${data.body}</p>`;
+              document.getElementById("output").innerHTML = output;
+            })
+            .catch((err) => consolo.log(err));
+        });
+    </script>
+  </body>
+</html>
